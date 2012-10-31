@@ -9,7 +9,7 @@
     "target-dir": "AllPlayers",
     "require": {
         "php": ">=5.3.2",
-        "guzzle/guzzle": ">=2.8.8"
+        "guzzle/guzzle": "2.8.8"
     },
     "suggest": {
         "monolog/monolog": "Flexible logger; required to use TestLogPlugin for STDOUT provided."

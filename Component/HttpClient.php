@@ -10,6 +10,7 @@ use Guzzle\Http\Plugin\CookiePlugin;
 use Guzzle\Http\Plugin\LogPlugin;
 
 use InvalidArgumentException;
+use UnexpectedValueException;
 
 
 /**
@@ -49,13 +50,6 @@ class HttpClient
     public $debug = false;
 
     /**
-     * Log instance to control log information generated during a request.
-     *
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
      * HTTP Response code of last request.
      *
      * @var int
@@ -91,10 +85,10 @@ class HttpClient
     /**
      * @param string $url
      *   e.g. https://www.allplayers.com/api/v1/rest.
-     * @param Logger $logger
+     * @param LogPlugin $log_plugin
      *   (optional)
-     *
-     * @todo Just extend a REST Class in the future.
+     * @param CookiePlugin $cookie_plugin
+     *   (optional)
      */
     public function __construct($url_prefix, LogPlugin $log_plugin = null, CookiePlugin $cookie_plugin = null)
     {
@@ -176,12 +170,31 @@ class HttpClient
 
         $body = ($params) ? json_encode($params) : null;
 
-        $request = $this->client->createRequest($verb, $url, $headers, $body);
+        $request = $this->getClient()->createRequest($verb, $url, $headers, $body);
 
         // Add Query String
         $request->getQuery()->merge($query);
 
-        $response = $request->send();
+        // @TODO - Redirects when not GET throw exceptions.
+        // @see https://github.com/guzzle/guzzle/issues/120
+        if ($verb !== 'GET') {
+            $request->getCurlOptions()->set('body_as_string', true);
+        }
+
+        try {
+            $response = $request->send();
+        } catch (\Guzzle\Http\Exception\CurlException $e) {
+            switch ($e->getErrorNo()) {
+                case 47:
+                    // @TODO - Cookies are not updated on GET redirect, re-issue works.
+                    // @see https://github.com/guzzle/guzzle/issues/149
+                    $request->getCurlOptions()->set('CURLOPT_MAXREDIRS', 5);
+                    $response = $request->send();
+                    break;
+                default:
+                    throw $e;
+            }
+        }
         $this->lastResponse = $response;
 
         $this->responseCode = $response->getStatusCode();
@@ -284,8 +297,8 @@ class HttpClient
                 $ret = json_decode($response->getBody(), FALSE);
                 // Bubble up decode errors.
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                  $this->logger->info('Invalid JSON: ' . $response->getBody());
-                  throw new ErrorException('Failed to decode JSON response.', json_last_error());
+                  $this->logPlugin->getLogAdapter()->log('Invalid JSON in response', LOG_INFO, $response);
+                  throw new UnexpectedValueException('Failed to decode JSON response.', json_last_error());
                 }
                 break;
             default:
