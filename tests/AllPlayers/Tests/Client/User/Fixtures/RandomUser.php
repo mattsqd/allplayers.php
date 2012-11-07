@@ -22,12 +22,12 @@ class RandomUser extends User {
    *     is generated or regenerate the same.
    */
   public function __construct($child = NULL, $validate = TRUE, $rand = NULL) {
-    $rand = (isset($rand) && !empty($rand)) ?$rand: rand();
+    $rand = (isset($rand) && !empty($rand)) ?$rand: self::random_string(8);
 
     $this->email = self::getRandomEmail($rand);
     $this->password = '123testing';
     $this->firstname = "Robot";
-    $this->lastname = "#$rand";
+    $this->lastname = "$rand";
     $this->validate = $validate;
 
     // Kill TZ errors.
@@ -56,5 +56,24 @@ class RandomUser extends User {
     $rand = (isset($rand) && !empty($rand)) ?$rand: rand();
 
     return "number$rand@example.com";
+  }
+
+  /**
+   * rand_string
+   *
+   * @param int $length
+   *
+   * @return string
+   */
+  static public function random_string($length) {
+    $str = '';
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    $size = strlen($chars);
+    for( $i = 0; $i < $length; $i++ ) {
+        $str .= $chars[rand(0, $size - 1)];
+    }
+
+    return $str;
   }
 }

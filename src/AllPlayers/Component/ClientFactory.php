@@ -6,23 +6,14 @@ use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Guzzle\Plugin\Log\LogPlugin;
 use Guzzle\Plugin\Cookie\CookiePlugin;
 use Guzzle\Plugin\Oauth\OauthPlugin;
-use Guzzle\Http\Client as GuzzleClient;
 
 use ErrorException;
 
 /**
  * Factory methods for initializing the AllPlayers Client.
  */
-class ClientFactory extends Client
+class ClientFactory
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($base_url, LogPlugin $log_plugin = null)
-    {
-        parent::__construct("$base_url/api/v1/rest", $log_plugin);
-    }
-
     /**
      * Factory method to create a new Client with Session authentication
      *
@@ -37,13 +28,13 @@ class ClientFactory extends Client
      *
      * @return Client new http client object
      */
-    public static function SessionFactory($url_prefix, CookiePlugin $cookie_plugin = null, GuzzleClient $client = null, LogPlugin $log_plugin = null)
+    public static function SessionFactory($url_prefix, CookiePlugin $cookie_plugin = null, Client $client = null, LogPlugin $log_plugin = null)
     {
         if (!$client) {
-            $client = new self($url_prefix, $log_plugin);
+            $client = new Client($url_prefix, $log_plugin);
         }
         $auth_plugin = ($cookie_plugin) ? $cookie_plugin : new CookiePlugin(new ArrayCookieJar());
-        $client->addSubscriber($auth_plugin);
+        $client->getClient()->addSubscriber($auth_plugin);
 
         return $client;
     }
@@ -62,13 +53,13 @@ class ClientFactory extends Client
      *
      * @return Client new http client object
      */
-    public static function OAuthFactory($url_prefix, $oauth_config, GuzzleClient $client = null, LogPlugin $log_plugin = null)
+    public static function OAuthFactory($url_prefix, $oauth_config, Client $client = null, LogPlugin $log_plugin = null)
     {
         if (!$client) {
-            $client = new self($url_prefix, $log_plugin);
+            $client = new Client($url_prefix, $log_plugin);
         }
         $auth_plugin = new OauthPlugin($oauth_config);
-        $client->addSubscriber($auth_plugin);
+        $client->getClient()->addSubscriber($auth_plugin);
 
         return $client;
     }
@@ -87,12 +78,14 @@ class ClientFactory extends Client
      *
      * @return Client new http client object
      */
-    public static function BasicAuthFactory($url_prefix, $username, $password, GuzzleClient $client = null, LogPlugin $log_plugin = null)
+    public static function BasicAuthFactory($url_prefix, $username, $password, Client $client = null, LogPlugin $log_plugin = null)
     {
         if (!$client) {
-            $client = new self($url_prefix, $log_plugin);
+            $client = new Client($url_prefix, $log_plugin);
         }
         $auth_plugin = new CurlAuthPlugin($username, $password);
-        $client->addSubscriber($auth_plugin);
+        $client->getClient()->addSubscriber($auth_plugin);
+
+        return $client;
     }
 }
