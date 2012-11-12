@@ -1,6 +1,8 @@
 <?php
 namespace AllPlayers;
 
+use AllPlayers\Service\UserService;
+
 use AllPlayers\Component\HttpClient;
 
 use Guzzle\Http\Plugin\CookiePlugin;
@@ -19,6 +21,16 @@ class Client extends HttpClient
     public function __construct($base_url, LogPlugin $log_plugin = null, $cookie_plugin = null)
     {
         parent::__construct("$base_url/api/v1/rest", $log_plugin, $cookie_plugin);
+    }
+
+    /**
+     * Get UserService for this instance.
+     *
+     * @return UserService
+     */
+    public function userService()
+    {
+        return new UserService($this);
     }
 
     /**
