@@ -2,6 +2,7 @@
 namespace AllPlayers;
 
 use AllPlayers\Service\UserService;
+use AllPlayers\Service\GroupService;
 
 use AllPlayers\Component\HttpClient;
 
@@ -31,6 +32,16 @@ class Client extends HttpClient
     public function userService()
     {
         return new UserService($this);
+    }
+
+    /**
+     * Get GroupService for this instance.
+     *
+     * @return GroupService
+     */
+    public function groupService()
+    {
+        return new GroupService($this);
     }
 
     /**
