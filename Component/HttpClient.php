@@ -151,7 +151,7 @@ class HttpClient
      * @return array|stdClass
      *   Array or object from decodeResponse().
      */
-    private function httpRequest(
+    protected function httpRequest(
         $verb,
         $path,
         $query = array(),

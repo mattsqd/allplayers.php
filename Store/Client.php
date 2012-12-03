@@ -704,7 +704,7 @@ class Client extends HttpClient
      *   If not set, then use own payment configuration.
      *
      * @return boolean
-     *   TRUE if succesfully added.
+     *   TRUE if successfully added.
      */
     public function groupPayeeSet($group_uuid, $payee_uuid = null)
     {
