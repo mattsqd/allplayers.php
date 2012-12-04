@@ -33,4 +33,9 @@ abstract class User extends stdClass
      * @var DateTime
      */
     public $birthdate;
+
+    /**
+     * @var string
+     */
+    public $uuid;
 }
