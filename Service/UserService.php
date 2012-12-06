@@ -2,6 +2,7 @@
 namespace AllPlayers\Service;
 
 use AllPlayers\Objects\User;
+use AllPlayers\Exceptions\ObjectNotFoundException;
 use DateTime;
 use stdClass;
 
@@ -61,10 +62,14 @@ class UserService extends ClientService
      *   Returns a user object using the email address provided.
      *
      * @throws \Guzzle\Http\Exception\BadResponseException
+     * @throws \AllPlayers\Exceptions\ObjectNotFoundException
      */
     public function getByEmail($email)
     {
         $response = $this->client->usersIndex(array('email' => $email));
+        if (empty($response)) {
+            throw new ObjectNotFoundException('User with email "' . $email . '" was not found.');
+        }
         return $this->decode(array_pop($response));
     }
 
