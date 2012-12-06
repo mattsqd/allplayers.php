@@ -318,15 +318,18 @@ class Client extends HttpClient
      *   then we default to 20.
      *   NOTE: This does not limit the overall return set when using the '*'
      *   page parameter.
+     * @param boolean $show_disabled
+     *   (Optional) Include disabled products in the result.
      *
      * @return array
      *   Array of product objects.
      *
      * @todo List group products, optionally by type.
      */
-    public function groupStoreProductsIndex($group_uuid, $type = null, $available_for_sale = false, $page = 0, $pagesize = 20)
+    public function groupStoreProductsIndex($group_uuid, $type = null, $available_for_sale = false, $page = 0, $pagesize = 20, $show_disabled = false)
     {
         $params = ($type) ? array('type' => $type) : array();
+        $params['show_disabled'] = $show_disabled;
 
         // If the user wants all products available for sale then we need to
         // append that to the path.
@@ -701,7 +704,7 @@ class Client extends HttpClient
      *   If not set, then use own payment configuration.
      *
      * @return boolean
-     *   TRUE if succesfully added.
+     *   TRUE if successfully added.
      */
     public function groupPayeeSet($group_uuid, $payee_uuid = null)
     {
