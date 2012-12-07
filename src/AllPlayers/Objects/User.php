@@ -7,12 +7,17 @@ use stdClass;
 /**
  * Defines standard user fields.
  */
-abstract class User extends stdClass
+class User extends stdClass
 {
     /**
      * @var string
      */
     public $email;
+
+    /**
+     * @var string
+     */
+    public $password;
 
     /**
      * @var string
@@ -33,4 +38,9 @@ abstract class User extends stdClass
      * @var DateTime
      */
     public $birthdate;
+
+    /**
+     * @var string
+     */
+    public $uuid;
 }
