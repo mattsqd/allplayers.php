@@ -82,6 +82,7 @@ class Client extends HttpClient
      * @param string $birthday
      * @param string $password
      * @param string $last_modified
+     * @param array $address
      *
      * @return stdClass
      *   Uuser object.
@@ -94,7 +95,8 @@ class Client extends HttpClient
         $gender,
         $birthday,
         $password = null,
-        $last_modified = null
+        $last_modified = null,
+        $address = null
     ) {
         $params = array(
             'firstname' => $firstname,
@@ -104,6 +106,7 @@ class Client extends HttpClient
             'birthday' => $birthday,
             'password' => $password,
             'last_modified' => $last_modified,
+            'address' => $address
         );
 
         return $this->put("users/$uuid", array_filter($params));
@@ -118,13 +121,14 @@ class Client extends HttpClient
      * @param string $gender
      * @param string $birthday
      * @param string $password
+     * @param array $address
      *
      * @return stdClass
      *   User object.
      *
      * @todo Create seperate Exception for captcha to simplify this code.
      */
-    public function userCreateUser($firstname, $lastname, $email, $gender, $birthday, $password = null)
+    public function userCreateUser($firstname, $lastname, $email, $gender, $birthday, $password = null, $address = null)
     {
         $userData = array(
             'firstname' => $firstname,
@@ -132,7 +136,8 @@ class Client extends HttpClient
             'email'     => $email,
             'gender'    => $gender,
             'birthday'  => $birthday,
-            'password'  => $password
+            'password'  => $password,
+            'address'   => $address
         );
         try {
             $ret = $this->post('users', array_filter($userData));
