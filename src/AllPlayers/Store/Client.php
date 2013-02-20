@@ -172,8 +172,8 @@ class Client extends HttpClient
      *   Whether or not to force the product to be invoiced, regardless of the
      *   product's type and settings.
      *
-     * @return boolean
-     *   TRUE if succesfully added.
+     * @return stdClass
+     *   The order that the product was added to.
      */
     public function usersCartAdd(
         $user_uuid,
@@ -470,8 +470,11 @@ class Client extends HttpClient
      *   Created on date and time of the payment. If omitted, the current date and
      *   time will be used.
      *
-     * @return boolean|string
-     *   TRUE or string with payment instructions (for in_person payments).
+     * @return stdClass
+     *   Object with the following properties:
+     *   - transaction_id: ID of the payment transaction that was created.
+     *   - instructions (optional): Any additional instructions are required for the
+     *     user to complete payment (e.g. pay in person).
      */
     public function orderAddPayment(
         $order_uuid,
@@ -688,8 +691,9 @@ class Client extends HttpClient
      *
      * @param string $group_uuid
      *
-     * @return string
-     *   The group's payee uuid.
+     * @return stdClass
+     *   Object with the following properties:
+     *   - uuid: UUID of the group's payee. NULL if no payee has been set.
      */
     public function groupPayeeGet($group_uuid)
     {
@@ -703,8 +707,9 @@ class Client extends HttpClient
      * @param string $payee_uuid
      *   If not set, then use own payment configuration.
      *
-     * @return boolean
-     *   TRUE if successfully added.
+     * @return stdClass
+     *   Object with the following properties:
+     *   - uuid: UUID of the payee that was set on the group.
      */
     public function groupPayeeSet($group_uuid, $payee_uuid = null)
     {
