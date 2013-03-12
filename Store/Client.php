@@ -349,6 +349,7 @@ class Client extends HttpClient
      * @param string $originating_product_uuid
      * @param string $line_item_type
      * @param string $user_uuid
+     * @param string $seller_uuid
      * @param string $fields
      * @param integer $pagesize
      * @param integer $page
@@ -359,6 +360,7 @@ class Client extends HttpClient
         $originating_product_uuid = null,
         $line_item_type = null,
         $user_uuid = null,
+        $seller_uuid = null,
         $fields = null,
         $pagesize = 0,
         $page = 0
@@ -369,6 +371,7 @@ class Client extends HttpClient
             'line_item_type' => $line_item_type,
             'product_uuid' => $product_uuid,
             'user_uuid' => $user_uuid,
+            'seller_uuid' => $seller_uuid,
         );
 
         return $this->index('line_items', array_filter($params), $fields, $page, $pagesize);
