@@ -342,6 +342,44 @@ class Client extends HttpClient
     }
 
     /**
+     * Retrieve a single line item.
+     *
+     * @param string $uuid
+     *   UUID of the line item to retrieve.
+     *
+     * @return stdClass
+     *   Line item object.
+     */
+    public function lineItemsGet($uuid)
+    {
+        return $this->get("line_items/$uuid");
+    }
+
+    /**
+     * Update a single line item.
+     *
+     * @param string $uuid
+     *   UUID of the line item to update.
+     * @param string $seller_uuid
+     *   UUID of the group to set as the seller for the line item.
+     * @param string $user_uuid
+     *   UUID of the user that the line item is being purchased for.
+     *
+     * @return stdClass
+     *   Updated line item object.
+     */
+    public function lineItemPut($uuid, $seller_uuid = null, $user_uuid = null)
+    {
+        return $this->put(
+            "line_items/$uuid",
+            array(
+                'seller_uuid' => $seller_uuid,
+                'user_uuid' => $user_uuid,
+            )
+        );
+    }
+
+    /**
      * Line Items Index.
      *
      * @param string $originating_order_uuid
