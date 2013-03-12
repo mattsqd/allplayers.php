@@ -209,12 +209,13 @@ class Client extends HttpClient
      * @return boolean
      *   TRUE if succesfully added.
      */
-    public function usersRelationshipsSync($user_uuid, $og_role) {
-      return $this->post(
-        'users/' . $user_uuid . '/sync_relationships',
-        array('og_role' => $og_role),
-        $this->headers
-      );
+    public function usersRelationshipsSync($user_uuid, $og_role)
+    {
+        return $this->post(
+            'users/' . $user_uuid . '/sync_relationships',
+            array('og_role' => $og_role),
+            $this->headers
+        );
     }
 
     /**
@@ -326,8 +327,14 @@ class Client extends HttpClient
      *
      * @todo List group products, optionally by type.
      */
-    public function groupStoreProductsIndex($group_uuid, $type = null, $available_for_sale = false, $page = 0, $pagesize = 20, $show_disabled = false)
-    {
+    public function groupStoreProductsIndex(
+        $group_uuid,
+        $type = null,
+        $available_for_sale = false,
+        $page = 0,
+        $pagesize = 20,
+        $show_disabled = false
+    ) {
         $params = ($type) ? array('type' => $type) : array();
         $params['show_disabled'] = $show_disabled;
 
@@ -338,7 +345,7 @@ class Client extends HttpClient
             $path .= '/available_for_sale';
         }
 
-        return $this->index($path, $params, NULL, $page, $pagesize);
+        return $this->index($path, $params, null, $page, $pagesize);
     }
 
     /**
@@ -763,5 +770,4 @@ class Client extends HttpClient
             );
         }
     }
-
 }
