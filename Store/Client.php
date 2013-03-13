@@ -209,12 +209,13 @@ class Client extends HttpClient
      * @return boolean
      *   TRUE if succesfully added.
      */
-    public function usersRelationshipsSync($user_uuid, $og_role) {
-      return $this->post(
-        'users/' . $user_uuid . '/sync_relationships',
-        array('og_role' => $og_role),
-        $this->headers
-      );
+    public function usersRelationshipsSync($user_uuid, $og_role)
+    {
+        return $this->post(
+            'users/' . $user_uuid . '/sync_relationships',
+            array('og_role' => $og_role),
+            $this->headers
+        );
     }
 
     /**
@@ -326,8 +327,14 @@ class Client extends HttpClient
      *
      * @todo List group products, optionally by type.
      */
-    public function groupStoreProductsIndex($group_uuid, $type = null, $available_for_sale = false, $page = 0, $pagesize = 20, $show_disabled = false)
-    {
+    public function groupStoreProductsIndex(
+        $group_uuid,
+        $type = null,
+        $available_for_sale = false,
+        $page = 0,
+        $pagesize = 20,
+        $show_disabled = false
+    ) {
         $params = ($type) ? array('type' => $type) : array();
         $params['show_disabled'] = $show_disabled;
 
@@ -338,7 +345,45 @@ class Client extends HttpClient
             $path .= '/available_for_sale';
         }
 
-        return $this->index($path, $params, NULL, $page, $pagesize);
+        return $this->index($path, $params, null, $page, $pagesize);
+    }
+
+    /**
+     * Retrieve a single line item.
+     *
+     * @param string $uuid
+     *   UUID of the line item to retrieve.
+     *
+     * @return stdClass
+     *   Line item object.
+     */
+    public function lineItemsGet($uuid)
+    {
+        return $this->get("line_items/$uuid");
+    }
+
+    /**
+     * Update a single line item.
+     *
+     * @param string $uuid
+     *   UUID of the line item to update.
+     * @param string $seller_uuid
+     *   UUID of the group to set as the seller for the line item.
+     * @param string $user_uuid
+     *   UUID of the user that the line item is being purchased for.
+     *
+     * @return stdClass
+     *   Updated line item object.
+     */
+    public function lineItemPut($uuid, $seller_uuid = null, $user_uuid = null)
+    {
+        return $this->put(
+            "line_items/$uuid",
+            array(
+                'seller_uuid' => $seller_uuid,
+                'user_uuid' => $user_uuid,
+            )
+        );
     }
 
     /**
@@ -349,6 +394,7 @@ class Client extends HttpClient
      * @param string $originating_product_uuid
      * @param string $line_item_type
      * @param string $user_uuid
+     * @param string $seller_uuid
      * @param string $fields
      * @param integer $pagesize
      * @param integer $page
@@ -359,6 +405,7 @@ class Client extends HttpClient
         $originating_product_uuid = null,
         $line_item_type = null,
         $user_uuid = null,
+        $seller_uuid = null,
         $fields = null,
         $pagesize = 0,
         $page = 0
@@ -369,6 +416,7 @@ class Client extends HttpClient
             'line_item_type' => $line_item_type,
             'product_uuid' => $product_uuid,
             'user_uuid' => $user_uuid,
+            'seller_uuid' => $seller_uuid,
         );
 
         return $this->index('line_items', array_filter($params), $fields, $page, $pagesize);
@@ -722,5 +770,4 @@ class Client extends HttpClient
             );
         }
     }
-
 }
