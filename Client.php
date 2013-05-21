@@ -1028,7 +1028,11 @@ class Client extends HttpClient
             $parameters['box'] = $box;
         }
 
-        return $this->index($path, $parameters, $fields, $page, $pagesize);
+        // Convert pages to offset because the public API has been changed to
+        // accept offsets directly for messages.
+        $offset = $page * $pagesize;
+
+        return $this->index($path, $parameters, $fields, $offset, $pagesize);
     }
 
     /**
