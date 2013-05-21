@@ -33,6 +33,6 @@ class ClientTest extends GuzzleTestCase
         $this->assertEquals($user->firstname, $r_user->firstname);
         $this->assertEquals($user->lastname, $r_user->lastname);
         $this->assertEquals($user->email, $r_user->email);
-        $this->assertEquals(substr($user->gender, 0, 1), $r_user->gender);
+        $this->assertEquals(strtoupper(substr($user->gender, 0, 1)), strtoupper($r_user->gender));
     }
 }
