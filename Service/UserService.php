@@ -39,7 +39,7 @@ class UserService extends ClientService
      */
     public function create(User $user)
     {
-        $birthdate_formatted = $user->birthdate->format('Y-m-d') . 'T00:00:00';
+        $birthdate_formatted = $user->birthdate->format('Y-m-d');
         $gender_mf = ($user->gender == 'Male' ? 'M' : 'F');
         $response = $this->client->userCreateUser(
             $user->first_name,
