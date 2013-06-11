@@ -171,6 +171,9 @@ class Client extends HttpClient
      * @param boolean $force_invoice
      *   Whether or not to force the product to be invoiced, regardless of the
      *   product's type and settings.
+     * @param string $creator_uuid
+     *   UUID of the user responsible for creating the new line item. Defaults
+     *   to the authenticated user.
      *
      * @return stdClass
      *   The order that the product was added to.
@@ -182,7 +185,8 @@ class Client extends HttpClient
         $installment_plan = false,
         $role_uuid = null,
         $sold_by_uuid = null,
-        $force_invoice = false
+        $force_invoice = false,
+        $creator_uuid = null
     ) {
         return $this->post(
             "users/$user_uuid/add_to_cart",
@@ -193,6 +197,7 @@ class Client extends HttpClient
                 'role_uuid' => $role_uuid,
                 'sold_by_uuid' => $sold_by_uuid,
                 'force_invoice' => $force_invoice,
+                'creator_uuid' => $creator_uuid,
             ),
             $this->headers
         );
@@ -492,6 +497,9 @@ class Client extends HttpClient
      *   registration.
      * @param string $sold_by_uuid
      *   UUID of the group selling the product.
+     * @param string $creator_uuid
+     *   UUID of the user responsible for creating the new line item. Defaults
+     *   to the currently logged in user.
      *
      * @return stdClass
      *   Created object from api.
@@ -508,7 +516,8 @@ class Client extends HttpClient
         DateTime $created = null,
         $initial_payment_only = 0,
         $role_uuid = null,
-        $sold_by_uuid = null
+        $sold_by_uuid = null,
+        $creator_uuid = null
     ) {
         $params = array(
             'user_uuid' => $user_uuid,
@@ -527,6 +536,7 @@ class Client extends HttpClient
             'initial_payment_only' => $initial_payment_only,
             'role_uuid' => $role_uuid,
             'sold_by_uuid' => $sold_by_uuid,
+            'creator_uuid' => $creator_uuid,
         );
 
         return $this->post('orders', array_filter($params));
