@@ -471,72 +471,78 @@ class Client extends HttpClient
      * Create an order.
      *
      * @param string $user_uuid
-     *   UUID of the owner of the order.
-     * @param string $product_uuid
-     *   UUID of the product to place in the order.
+     *    UUID of the user to create the order for.
+     * @param string $group_uuid
+     *   UUID of the group to create the order under. If the group is not the
+     *   payee then the payee group will be used instead.
+     * @param array $line_items
+     *   Array of line items to be added to the new order. Each line item may
+     *   include the following indexes:
+     *   - product_uuid: UUID of the product to be referenced by the line item.
+     *   - quantity: Quantity of the product for the line item. Defaults to 1.
+     *   - for_user_uuid: The user that the product is being purchased for.
+     *     Defaults to the same value as $user_uuid.
+     *   - installment_plan: Whether or not to use an installment plan, if
+     *     available, for the product. Defaults to FALSE.
+     *   - role_uuid: UUID of a role that the product is being purchased for if
+     *     purchased as part of registration.
+     *   - sold_by_uuid: UUID of the group that is selling the product. Defaults
+     *     to the same value as $group_uuid.
+     *   - creator_uuid: UUID of the user who is creating this line item.
+     *     Defaults to the logged in user.
      * @param string $order_status
-     *   Status of new order (invoice, shopping cart, etc).
-     * @param string $for_user_uuid
-     *   UUID of the user the product is being purchased for.
-     * @param DateTime $due_date
-     *   Due date. Applicable only if order_status is invoice.
-     * @param array $billing_address
-     *   Billing address of the user.
-     * @param array $shipping_address
-     *   Shipping address of the user.
-     * @param integer $installment_plan
-     *   Whether or not an installment plan should be used to purchase the
-     *   product.
+     *   Initial status of the new order.
      * @param DateTime $created
-     *   Created on date and time of the order. If omitted, the current date and
-     *   time will be used.
-     * @param integer $initial_payment_only
-     *   Whether to generate automatically the installments.
-     * @param string $role_uuid
-     *   UUID of a role to associate this purchase with if used for
-     *   registration.
-     * @param string $sold_by_uuid
-     *   UUID of the group selling the product.
-     * @param string $creator_uuid
-     *   UUID of the user responsible for creating the new line item. Defaults
-     *   to the currently logged in user.
+     *   Order creation time. If omitted, the current date and time will be
+     *   used.
+     * @param DateTime $due_date
+     *   Due date of the order if it is an invoice. Defaults to the current day.
+     * @param array $billing_address
+     *   Billing address to be set on the order. May include the following
+     *   indexes:
+     *   - street_1: First street address.
+     *   - street_2: Second street address.
+     *   - city: City of the address.
+     *   - state: State of the address.
+     *   - zip: Postal code of the address.
+     *   - country: ISO 3166-1 three digit country code of the address.
+     *   - first_name: First name of the person to be billed.
+     *   - last_name: Last name of the person to be billed.
+     * @param array $shipping_address
+     *   Shipping address to be set on the order. Format should match the
+     *   billing address. Defaults to the billing address if it has been set.
+     * @param boolean $initial_payment_only
+     *   If using an installment plan, only create an order for the initial
+     *   payment. This will prevent installment payments from being created.
      *
      * @return stdClass
      *   Created object from api.
      */
     public function orderCreate(
         $user_uuid,
-        $product_uuid,
-        $order_status = null,
-        $for_user_uuid = null,
-        DateTime $due_date = null,
-        $billing_address = array(),
-        $shipping_address = array(),
-        $installment_plan = 0,
+        $group_uuid,
+        array $line_items,
+        $order_status = 'cart',
         DateTime $created = null,
-        $initial_payment_only = 0,
-        $role_uuid = null,
-        $sold_by_uuid = null,
-        $creator_uuid = null
+        DateTime $due_date = null,
+        array $billing_address = array(),
+        array $shipping_address = array(),
+        $initial_payment_only = false
     ) {
         $params = array(
-            'user_uuid' => $user_uuid,
-            'product_uuid' => $product_uuid,
-            'order_status' => $order_status,
-            'for_user_uuid' => $for_user_uuid,
-            'due_date' => (!empty($due_date)
-                ? $due_date->format(self::DATE_FORMAT)
-                : null),
-            'billing_address' => empty($billing_address) ? null : array_filter($billing_address),
-            'shipping_address' => empty($shipping_address) ? null : array_filter($shipping_address),
-            'installment_plan' => $installment_plan,
-            'created' => (!empty($created)
-                ? $created->setTimezone(new DateTimeZone('UTC'))->format(self::DATETIME_FORMAT)
-                : null),
-            'initial_payment_only' => $initial_payment_only,
-            'role_uuid' => $role_uuid,
-            'sold_by_uuid' => $sold_by_uuid,
-            'creator_uuid' => $creator_uuid,
+          'user_uuid' => $user_uuid,
+          'group_uuid' => $group_uuid,
+          'order_status' => $order_status,
+          'line_items' => $line_items,
+          'created' => (!empty($created)
+              ? $created->setTimezone(new DateTimeZone('UTC'))->format(self::DATE_FORMAT)
+              : null),
+          'due_date' => (!empty($due_date)
+              ? $due_date->format(self::DATE_FORMAT)
+              : null),
+          'billing_address' => $billing_address,
+          'shipping_address' => $shipping_address,
+          'initial_payment_only' => $initial_payment_only,
         );
 
         return $this->post('orders', array_filter($params));
