@@ -105,8 +105,12 @@ class UserService extends ClientService
         $user->first_name = $wannabe->firstname;
         $user->last_name = $wannabe->lastname;
         $user->email = $wannabe->email;
-        $user->gender = ($wannabe->gender == 'male' ? 'Male' : 'Female');
-        $user->birthdate = new DateTime($wannabe->birthday);
+        if (!empty($wannabe->gender)) {
+            $user->gender = ($wannabe->gender == 'male' ? 'Male' : 'Female');
+        }
+        if (!empty($user->birthdate)) {
+            $user->birthdate = new DateTime($wannabe->birthday);
+        }
         $user->uuid = $wannabe->uuid;
         return $user;
     }
