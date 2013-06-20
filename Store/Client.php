@@ -242,6 +242,32 @@ class Client extends HttpClient
     }
 
     /**
+     * Merges two users.
+     *
+     * Any entities owned by or referencing the user to be merged will be
+     * updated to reference the base user. This resource is only available to
+     * privileged users.
+     *
+     * @param string $base_user_uuid
+     *   UUID of the user who is the base of the merge. This is the user that will
+     *   remain.
+     * @param string $merge_user_uuid
+     *    UUID of the user to be merged into the base user. This user will be
+     *   deleted.
+     *
+     * @return string
+     *   UUID of the base user.
+     */
+    public function usersMerge($base_user_uuid, $merge_user_uuid)
+    {
+        return $this->post(
+            "users/$base_user_uuid/merge/$merge_user_uuid",
+            array(),
+            $this->headers
+        )->uuid;
+    }
+
+    /**
      * Return the group stores.
      *
      * @param string $user_uuid
