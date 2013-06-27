@@ -204,24 +204,6 @@ class Client extends HttpClient
     }
 
     /**
-     * Transfers any information from a temporary user to a new account.
-     *
-     * @param string $old_user_uuid
-     *   The temporary user uuid.
-     * @param string $new_user_uuid
-     *   The new user's uuid.
-     */
-    public function userReplace($old_user_uuid, $new_user_uuid) {
-        // @todo This has to be implemented on store.
-//        $this->post(
-//            "users/$old_user_uuid/replace_user",
-//            array(
-//                'new_user_uuid' => $new_user_uuid,
-//            )
-//        );
-    }
-
-    /**
      * Sync roles for a user.
      *
      * @param string $user_uuid
