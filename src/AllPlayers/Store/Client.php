@@ -315,6 +315,17 @@ class Client extends HttpClient
     }
 
     /**
+     * Update a group store to match group information.
+     *
+     * @param string $uuid
+     *   Group UUID string.
+     */
+    public function groupStoreUpdate($uuid, $data)
+    {
+        return $this->put("group_stores/$uuid", $data);
+    }
+
+    /**
      * Synchronize group store users with users on www
      *
      * @param string $uuid
