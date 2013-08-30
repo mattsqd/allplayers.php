@@ -516,6 +516,8 @@ class Client extends HttpClient
      *     to the same value as $group_uuid.
      *   - creator_uuid: UUID of the user who is creating this line item.
      *     Defaults to the logged in user.
+     *   - invoice: Whether or not the line item is part of an invoice and the user
+     *     should be required to pay for it.
      * @param string $order_status
      *   Initial status of the new order.
      * @param DateTime $created
