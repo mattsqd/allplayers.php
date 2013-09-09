@@ -174,6 +174,9 @@ class Client extends HttpClient
      * @param string $creator_uuid
      *   UUID of the user responsible for creating the new line item. Defaults
      *   to the authenticated user.
+     * @param integer $amount
+     *   Amount to charge the user for the product, overrides the amount of the
+     *   product being purchased. Must be an integer greater than zero.
      *
      * @return stdClass
      *   The order that the product was added to.
@@ -186,7 +189,8 @@ class Client extends HttpClient
         $role_uuid = null,
         $sold_by_uuid = null,
         $force_invoice = false,
-        $creator_uuid = null
+        $creator_uuid = null,
+        $amount = 0
     ) {
         return $this->post(
             "users/$user_uuid/add_to_cart",
@@ -198,6 +202,7 @@ class Client extends HttpClient
                 'sold_by_uuid' => $sold_by_uuid,
                 'force_invoice' => $force_invoice,
                 'creator_uuid' => $creator_uuid,
+                'amount' => $amount,
             ),
             $this->headers
         );
