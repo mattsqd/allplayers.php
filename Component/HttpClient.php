@@ -357,10 +357,10 @@ class HttpClient
         // Index loop.
         do {
             // Get current page.
-            $page_results = $this->get($path, array_filter($query));
+            $page_results = (array) $this->get($path, array_filter($query));
 
             // Merge into overall result.
-            $results = array_merge($results, (array) $page_results);
+            $results = array_merge($results, $page_results);
             $query['page']++;
 
             // If the result count != to pagesize, we are on the last page and
