@@ -7,8 +7,8 @@ use InvalidArgumentException;
 
 use AllPlayers\Component\HttpClient;
 
-use Guzzle\Http\Plugin\CookiePlugin;
-use Guzzle\Http\Plugin\LogPlugin;
+use Guzzle\Plugin\Cookie\CookiePlugin;
+use Guzzle\Plugin\Log\LogPlugin;
 
 class Client extends HttpClient
 {
@@ -174,6 +174,9 @@ class Client extends HttpClient
      * @param string $creator_uuid
      *   UUID of the user responsible for creating the new line item. Defaults
      *   to the authenticated user.
+     * @param integer $amount
+     *   Amount to charge the user for the product, overrides the amount of the
+     *   product being purchased. Must be an integer greater than zero.
      *
      * @return stdClass
      *   The order that the product was added to.
@@ -186,7 +189,8 @@ class Client extends HttpClient
         $role_uuid = null,
         $sold_by_uuid = null,
         $force_invoice = false,
-        $creator_uuid = null
+        $creator_uuid = null,
+        $amount = 0
     ) {
         return $this->post(
             "users/$user_uuid/add_to_cart",
@@ -198,27 +202,10 @@ class Client extends HttpClient
                 'sold_by_uuid' => $sold_by_uuid,
                 'force_invoice' => $force_invoice,
                 'creator_uuid' => $creator_uuid,
+                'amount' => $amount,
             ),
             $this->headers
         );
-    }
-
-    /**
-     * Transfers any information from a temporary user to a new account.
-     *
-     * @param string $old_user_uuid
-     *   The temporary user uuid.
-     * @param string $new_user_uuid
-     *   The new user's uuid.
-     */
-    public function userReplace($old_user_uuid, $new_user_uuid) {
-        // @todo This has to be implemented on store.
-//        $this->post(
-//            "users/$old_user_uuid/replace_user",
-//            array(
-//                'new_user_uuid' => $new_user_uuid,
-//            )
-//        );
     }
 
     /**
@@ -516,6 +503,8 @@ class Client extends HttpClient
      *     to the same value as $group_uuid.
      *   - creator_uuid: UUID of the user who is creating this line item.
      *     Defaults to the logged in user.
+     *   - invoice: Whether or not the line item is part of an invoice and the user
+     *     should be required to pay for it.
      * @param string $order_status
      *   Initial status of the new order.
      * @param DateTime $created

@@ -1,13 +1,11 @@
 <?php
 namespace AllPlayers\Component;
 
-use Guzzle\Common\Log\ClosureLogAdapter;
+use Guzzle\Log\ClosureLogAdapter;
 use Guzzle\Http\Client;
-use Guzzle\Http\CookieJar\ArrayCookieJar;
 use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\Response;
-use Guzzle\Http\Plugin\CookiePlugin;
-use Guzzle\Http\Plugin\LogPlugin;
+use Guzzle\Plugin\Log\LogPlugin;
 
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -37,7 +35,7 @@ class HttpClient
     /**
      * Guzzle instance.
      *
-     * @var Guzzle\Http\ClientInterface;
+     * @var Guzzle\Http\Client;
      */
     protected $client = null;
 
@@ -83,14 +81,12 @@ class HttpClient
     protected $headers = array();
 
     /**
-     * @param string $url
+     * @param string $url_prefix
      *   e.g. https://www.allplayers.com/api/v1/rest.
      * @param LogPlugin $log_plugin
      *   (optional)
-     * @param CookiePlugin $cookie_plugin
-     *   (optional)
      */
-    public function __construct($url_prefix, LogPlugin $log_plugin = null, CookiePlugin $cookie_plugin = null)
+    public function __construct($url_prefix, LogPlugin $log_plugin = null)
     {
         // Validate $url argument.
         if (!filter_var($url_prefix, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
@@ -100,11 +96,7 @@ class HttpClient
         }
         $this->urlPrefix = $url_prefix;
 
-        $this->client = new Client();
-
-        // Use passed in CookiePlugin or use basic array backed version.
-        $this->cookiePlugin = ($cookie_plugin) ? $cookie_plugin : new CookiePlugin(new ArrayCookieJar());
-        $this->client->addSubscriber($this->cookiePlugin);
+        $this->client = new Client($url_prefix);
 
         if ($log_plugin) {
           // Register passed in LogPlugin.
@@ -114,6 +106,8 @@ class HttpClient
           // Create a noop logger for consistency, but don't register it for performance.
           $this->logPlugin = new LogPlugin(new ClosureLogAdapter(function(){}));
         }
+
+        return $this->client;
     }
 
     /**
@@ -122,8 +116,8 @@ class HttpClient
      * @return Guzzle\Http\ClientInterface
      */
     public function getClient() {
-      return $this->client;
-    }
+        return $this->client;
+     }
 
     /**
      * Adds headers to the http request.
@@ -357,10 +351,10 @@ class HttpClient
         // Index loop.
         do {
             // Get current page.
-            $page_results = $this->get($path, array_filter($query));
+            $page_results = (array) $this->get($path, array_filter($query));
 
             // Merge into overall result.
-            $results = array_merge($results, (array) $page_results);
+            $results = array_merge($results, $page_results);
             $query['page']++;
 
             // If the result count != to pagesize, we are on the last page and
