@@ -388,6 +388,52 @@ class Client extends HttpClient
         return $ret;
     }
 
+    /**
+     * Retrieve a list of subgroups for this group.
+     *
+     * @param string $uuid
+     *   The uuid of the group for which to get subgroups.
+     * @param string $action
+     *   The action to take on the groups ('tree' or 'find').
+     * @param string $fields
+     *   The fields to get.
+     * @param string $query
+     *   The query to perform.
+     * @param int $limit
+     *   How many subgroups to be retrieved.
+     * @param int $offset
+     *   Offset the list of subgroups returned, default 0.
+     * @param int $depth
+     *   The amount of groups deep to traverse.
+     * @param int $include_hidden
+     *   Include hidden groups in the search.
+     * @param int $include_group_info
+     *   If we would like to include the register information along with the
+     *   subgroups.
+     * @param int $inclusive
+     *   If you would like to include the top level group information.
+     *
+     * @return object
+     *   Returns the tree structure.
+     */
+    public function groupsGetGroupTree($uuid, $action = NULL, $fields = '*', $query = '', $limit = 0, $offset = 0, $depth = 9, $include_hidden = 0, $include_group_info = 0, $inclusive = 0)
+    {
+        // Compile path.
+        $path = "groups/$uuid/subgroups/tree";
+        $query = array(
+          'action' => $action,
+          'fields' => $fields,
+          'query' => $query,
+          'limit' => $limit,
+          'offset' => $offset,
+          'depth' => $depth,
+          'include_hidden' => $include_hidden,
+          'include_group_info' => $include_group_info,
+          'inclusive' => $inclusive,
+        );
+
+        return $this->get($path, $query);
+    }
 
     /**
      * Retrieve a specific group.
@@ -1122,6 +1168,21 @@ class Client extends HttpClient
      */
     public function themeGetHtml($section = 'header')
     {
-        return $this->get("theme/$section");
+        // Check the cache if it is the footer.
+        if ($section == 'footer') {
+            $cache = cache_get('theme-footer');
+            if (!empty($cache)) {
+                return $cache->data;
+            }
+        }
+
+        // Get the HTML.
+        $html = $this->get("theme/$section");
+
+        // If it is the footer, save to cache.
+        if ($section == 'footer') {
+            cache_set('theme-footer', $html, 'cache', CACHE_TEMPORARY);
+        }
+        return $html;
     }
 }
