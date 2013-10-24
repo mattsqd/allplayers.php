@@ -151,6 +151,25 @@ class Client extends HttpClient
     }
 
     /**
+     * Get the payment status of a user's role fee.
+     *
+     * @param string $user_uuid
+     *   UUID for the user.
+     * @param string $group_uuid
+     *   UUID for the group.
+     * @param string $role_uuid
+     *   UUID for the role.
+     *
+     * @return int
+     *   Payment status for the role fees.
+     */
+    public function usersFeeStatus($user_uuid, $group_uuid, $role_uuid)
+    {
+        $status = $this->get("users/$user_uuid/fee_status/$group_uuid/$role_uuid");
+        return $status->payment_status;
+    }
+
+    /**
      * @musthave
      * Add items to the services users cart.
      *
