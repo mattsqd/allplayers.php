@@ -1158,31 +1158,18 @@ class Client extends HttpClient
     }
 
     /**
-     * Fetch HTML information from webapp.
+     * Fetch theme HTML from webapp.
      *
      * @param string $section
-     *   The section of HTML to retrieve (header or footer).
+     *   The theme section to retrieve.
      *
-     * @return string
-     *   HTML code for the header.
+     * @return stdClass
+     *   Theme information for the requested section with the following
+     *   properties:
+     *   - html: HTML code for the theme section.
      */
     public function themeGetHtml($section = 'header')
     {
-        // Check the cache if it is the footer.
-        if ($section == 'footer') {
-            $cache = cache_get('theme-footer');
-            if (!empty($cache)) {
-                return $cache->data;
-            }
-        }
-
-        // Get the HTML.
-        $html = $this->get("theme/$section");
-
-        // If it is the footer, save to cache.
-        if ($section == 'footer') {
-            cache_set('theme-footer', $html, 'cache', CACHE_TEMPORARY);
-        }
-        return $html;
+        return $this->get("theme/$section");
     }
 }
