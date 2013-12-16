@@ -196,6 +196,8 @@ class Client extends HttpClient
      * @param integer $amount
      *   Amount to charge the user for the product, overrides the amount of the
      *   product being purchased. Must be an integer greater than zero.
+     * @param integer $quantity
+     *   The quantity to add to the cart.
      *
      * @return stdClass
      *   The order that the product was added to.
@@ -209,7 +211,8 @@ class Client extends HttpClient
         $sold_by_uuid = null,
         $force_invoice = false,
         $creator_uuid = null,
-        $amount = 0
+        $amount = 0,
+        $quantity = 1
     ) {
         return $this->post(
             "users/$user_uuid/add_to_cart",
@@ -222,6 +225,7 @@ class Client extends HttpClient
                 'force_invoice' => $force_invoice,
                 'creator_uuid' => $creator_uuid,
                 'amount' => $amount,
+                'quantity' => $quantity,
             ),
             $this->headers
         );
