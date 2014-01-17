@@ -50,7 +50,7 @@ class Client extends HttpClient
      * @return stdClass
      *   User object.
      */
-    public function userGetUser($uuid)
+    public function userGetUser($uuid = 'current')
     {
         return $this->get("users/$uuid");
     }

@@ -6,6 +6,7 @@ use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Guzzle\Plugin\Log\LogPlugin;
 use Guzzle\Plugin\Cookie\CookiePlugin;
 use Guzzle\Plugin\Oauth\OauthPlugin;
+use Guzzle\Plugin\CurlAuth\CurlAuthPlugin;
 
 use ErrorException;
 
@@ -35,6 +36,7 @@ class ClientFactory
         }
         $auth_plugin = ($cookie_plugin) ? $cookie_plugin : new CookiePlugin(new ArrayCookieJar());
         $client->getClient()->addSubscriber($auth_plugin);
+        $client->cookie = $auth_plugin;
 
         return $client;
     }
@@ -81,7 +83,7 @@ class ClientFactory
     public static function BasicAuthFactory($url_prefix, $username, $password, Client $client = null, LogPlugin $log_plugin = null)
     {
         if (!$client) {
-            $client = new Client($url_prefix, $log_plugin);
+        $client = new Client($url_prefix, $log_plugin);
         }
         $auth_plugin = new CurlAuthPlugin($username, $password);
         $client->getClient()->addSubscriber($auth_plugin);
