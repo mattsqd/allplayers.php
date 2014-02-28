@@ -1,5 +1,5 @@
 <?php
-namespace AllPlayers;
+namespace AllPlayers\API\V1;
 
 use AllPlayers\Service\UserService;
 use AllPlayers\Service\GroupService;
