@@ -1,7 +1,7 @@
 <?php
 namespace AllPlayers\Service;
 
-use AllPlayers\Client;
+use AllPlayers\API\V1\Client;
 
 /**
  * Abstract base class for API Services using Client.
