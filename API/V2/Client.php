@@ -68,7 +68,7 @@ class Client extends HttpClient
             'agent' => $this->agent,
         );
 
-        return $this->httpRequest('POST', $path, null, $post_data, null);
+        return $this->httpRequest('POST', $path, array(), $post_data);
     }
 
     /**
