@@ -81,4 +81,48 @@ class Client extends HttpClient
     {
         return hash('sha256', session_id());
     }
+
+    /**
+     * Retrieves a list of products available for a group.
+     *
+     * @param string $group_uuid
+     *   UUID of the group to retrieve the products for.
+     * @param array $filters
+     *   (Optional) Filters to be applied to the query. Possible values are:
+     *   - status: The product status. May be an array of statuses or a single
+     *     status. Possible values are 1 (active) and 0 (disabled).
+     *   - type: The product type. May be an array of types or a single type.
+     *   - title: A portion of the product type. Must be a string and will be used
+     *     as a "contains" filter.
+     * @param array $fields
+     *   (Optional) Fields to be returned for each product. If left empty, all
+     *   fields will be retured.
+     * @param integer|string $page
+     *   (Optional) Numeric page number or '*' to fetch all pages.
+     *   Default to 0. If using '*', it is recommended to set a high $pagesize
+     *   to reduce the number of requests needed to retrieve the entire list.
+     * @param integer $pagesize
+     *   (Optional) Limit the number of results returned per page. If not set,
+     *   then we default to 10.
+     *   NOTE: This does not limit the overall return set when using the '*'
+     *   page parameter.
+     *
+     * @return array
+     *   Array of product objects.
+     */
+    public function getGroupProducts(
+        $group_uuid,
+        array $filters = array(),
+        array $fields = array(),
+        $page = 0,
+        $pagesize = 10
+    ) {
+        return $this->index(
+            'groups/' . $group_uuid . '/products',
+            array('filters' => $filters),
+            $fields,
+            $page,
+            $pagesize
+        );
+    }
 }
