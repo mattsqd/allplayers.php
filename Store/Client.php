@@ -198,6 +198,8 @@ class Client extends HttpClient
      *   product being purchased. Must be an integer greater than zero.
      * @param integer $quantity
      *   The quantity to add to the cart.
+     * @param string $product_title
+     *   The product title. Only used if an adhoc line item.
      *
      * @return stdClass
      *   The order that the product was added to.
@@ -212,7 +214,8 @@ class Client extends HttpClient
         $force_invoice = false,
         $creator_uuid = null,
         $amount = 0,
-        $quantity = 1
+        $quantity = 1,
+        $product_title = null
     ) {
         return $this->post(
             "users/$user_uuid/add_to_cart",
@@ -226,6 +229,7 @@ class Client extends HttpClient
                 'creator_uuid' => $creator_uuid,
                 'amount' => $amount,
                 'quantity' => $quantity,
+                'product_title' => $product_title,
             ),
             $this->headers
         );
@@ -685,7 +689,7 @@ class Client extends HttpClient
      *   Title for the new product, only required for "product" products.
      *
      * @return stdClass
-     *   The new product as returend by the API.
+     *   The new product as returned by the API.
      *
      * @todo Accept a product object rather than all of these arguments.
      */
