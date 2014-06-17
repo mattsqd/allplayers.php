@@ -177,7 +177,7 @@ class Event extends stdClass
                 $simple_compare[$key] = $prop;
             }
         }
-        if ($otherEvent->category == 'game' || $otherEvent->category == 'scrimmage') {
+	if (strtolower($otherEvent->category) == 'game' || strtolower($otherEvent->category == 'scrimmage')) {
             // There should be competitors here.
             // The title should be hijacked by the api and should not equal.
             if (empty($otherEvent->competitors) || !strpos($otherEvent->title, '@')) {
@@ -225,7 +225,7 @@ class Event extends stdClass
         }
 
         foreach ($simple_compare as $name => $value) {
-            if (empty($otherEvent->$name) || $otherEvent->$name != $value) {
+	    if (empty($otherEvent->$name) || strtolower($otherEvent->$name) != strtolower($value)) {
                 $diff[$name] = $value;
                 break;
             }
