@@ -92,6 +92,20 @@ class Client extends HttpClient
     }
 
     /**
+     * Send a batch operation to the API.
+     *
+     * @param array $batch
+     *   An array of calls.
+     *
+     * @return array
+     *   An array of results.
+     */
+    public function batch($batch)
+    {
+        return $this->post('batch', array('batch' => $batch));
+    }
+
+    /**
      * Retrieves a list of products available for a group.
      *
      * @param string $group_uuid
