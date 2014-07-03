@@ -132,7 +132,7 @@ class Client extends HttpClient
         $pagesize = 10
     ) {
         return $this->index(
-            'groups/' . $group_uuid . '/products',
+            'group/' . $group_uuid . '/products',
             array('filters' => $filters),
             $fields,
             $page,
