@@ -81,6 +81,13 @@ class HttpClient
     protected $headers = array();
 
     /**
+     * The X-CSRF token value.
+     *
+     * @var string
+     */
+    protected $csrfToken = null;
+
+    /**
      * @param string $url_prefix
      *   e.g. https://www.allplayers.com/api/v1/rest.
      * @param LogPlugin $log_plugin
@@ -117,7 +124,25 @@ class HttpClient
      */
     public function getClient() {
         return $this->client;
-     }
+    }
+
+    /**
+     * Get the X-CSRF token.
+     *
+     * @return string
+     *   The token value.
+     */
+    function getXCSRFToken() {
+        // Check if the token has already been retrieved.
+        if (isset($this->csrfToken)) {
+            return $this->csrfToken;
+        }
+
+        // Get the token.
+        $response = $this->post('user/token');
+        $this->csrfToken = $response->token;
+        return $this->csrfToken;
+    }
 
     /**
      * Adds headers to the http request.
