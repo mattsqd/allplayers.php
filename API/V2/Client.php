@@ -56,8 +56,9 @@ class Client extends HttpClient
      * @return array|stdClass
      *   Array or object from decodeResponse().
      */
-    public function post($path, $data)
+    public function post($path, $data = array())
     {
+        $data['time'] = time();
         $data = base64_encode(json_encode($data));
         $hmac = null;
         openssl_private_encrypt(hash('sha256', $data), $hmac, $this->privateKey);
