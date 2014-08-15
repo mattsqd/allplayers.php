@@ -122,7 +122,8 @@ class HttpClient
      *
      * @return Guzzle\Http\ClientInterface
      */
-    public function getClient() {
+    public function getClient()
+    {
         return $this->client;
     }
 
@@ -132,7 +133,8 @@ class HttpClient
      * @return string
      *   The token value.
      */
-    function getXCSRFToken() {
+    function getXCSRFToken()
+    {
         // Check if the token has already been retrieved.
         if (isset($this->csrfToken)) {
             return $this->csrfToken;
@@ -140,7 +142,7 @@ class HttpClient
 
         // Get the token.
         $response = $this->post('user/token');
-        $this->csrfToken = $response->token;
+        $this->csrfToken = str_replace("\n", '', $response->token);
         return $this->csrfToken;
     }
 
