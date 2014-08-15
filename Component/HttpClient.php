@@ -146,7 +146,7 @@ class HttpClient
 
         // Get the token.
         $response = $this->post('user/token');
-        $this->csrfToken = $response->token;
+        $this->csrfToken = str_replace("\n", '', $response->token);
         return $this->csrfToken;
     }
 

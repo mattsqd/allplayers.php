@@ -74,6 +74,11 @@ class Client extends HttpClient
         }
         // Get the CSRF token for any actions other than the listed ones.
         else if(!in_array($verb, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+            // If this is the first time getting the token, then we need to
+            // call something on store to get the proper session.
+            if (!isset($this->csrfToken)) {
+                $this->get('group_stores', array('limit' => '1'));
+            }
             $headers['X-CSRF-Token'] = $this->getXCSRFToken();
         }
 
