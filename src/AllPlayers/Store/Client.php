@@ -71,9 +71,12 @@ class Client extends HttpClient
         // Reset any saved CSRF token for the following paths.
         if (in_array($path, array('user/token', 'user/login', 'user/logout'))) {
             unset($this->csrfToken);
-        }
-        // Get the CSRF token for any actions other than the listed ones.
-        else if(!in_array($verb, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+        } elseif (!in_array($verb, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+            // If this is the first time getting the token, then we need to
+            // call something on store to get the proper session.
+            if (!isset($this->csrfToken)) {
+                $this->get('group_stores', array('limit' => '1'));
+            }
             $headers['X-CSRF-Token'] = $this->getXCSRFToken();
         }
 
