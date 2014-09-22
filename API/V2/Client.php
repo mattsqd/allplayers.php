@@ -56,8 +56,9 @@ class Client extends HttpClient
      * @return array|stdClass
      *   Array or object from decodeResponse().
      */
-    public function post($path, $data)
+    public function post($path, $data = array())
     {
+        $data['time'] = time();
         $data = base64_encode(json_encode($data));
         $hmac = null;
         openssl_private_encrypt(hash('sha256', $data), $hmac, $this->privateKey);
@@ -132,7 +133,7 @@ class Client extends HttpClient
         $pagesize = 10
     ) {
         return $this->index(
-            'groups/' . $group_uuid . '/products',
+            'group/' . $group_uuid . '/products',
             array('filters' => $filters),
             $fields,
             $page,
