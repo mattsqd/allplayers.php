@@ -58,6 +58,32 @@ class Client extends HttpClient
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function httpRequest(
+        $verb,
+        $path,
+        $query = array(),
+        $params = null,
+        $headers = array(),
+        $allow_redirects = true
+    ) {
+        // Reset any saved CSRF token for the following paths.
+        if (in_array($path, array('user/token', 'user/login', 'user/logout'))) {
+            unset($this->csrfToken);
+        } elseif (!in_array($verb, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+            // If this is the first time getting the token, then we need to
+            // call something on store to get the proper session.
+            if (!isset($this->csrfToken)) {
+                $this->get('group_stores', array('limit' => '1'));
+            }
+            $headers['X-CSRF-Token'] = $this->getXCSRFToken();
+        }
+
+        return parent::httpRequest($verb, $path, $query, $params, $headers, $allow_redirects);
+    }
+
+    /**
      * Returns the registration SKU.
      *
      * @param string $group_name
