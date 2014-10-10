@@ -46,30 +46,35 @@ class Client extends HttpClient
     }
 
     /**
-     * Send the data to the api server with an HMAC.
-     *
-     * @param string $path
-     *   The path of the url to call.
-     * @param array $data
-     *   The data to include.
-     *
-     * @return array|stdClass
-     *   Array or object from decodeResponse().
-     */
-    public function post($path, $data = array())
-    {
-        $data['time'] = time();
-        $data = base64_encode(json_encode($data));
-        $hmac = null;
-        openssl_private_encrypt(hash('sha256', $data), $hmac, $this->privateKey);
-        $post_data = array(
-            'data' => $data,
-            'hmac' => base64_encode($hmac),
-            'user' => $this->user,
-            'agent' => $this->agent,
-        );
-
-        return $this->httpRequest('POST', $path, array(), $post_data);
+      * {@inheritdoc}
+      */
+    protected function httpRequest(
+        $verb,
+        $path,
+        $query = array(),
+        $params = NULL,
+        $headers = array(),
+        $allow_redirects = TRUE
+    ) {
+        // Only add the hmac auth if we have all auth data set.
+        if (strlen($this->privateKey) && strlen($this->user) && strlen($this->agent)) {
+            $time = time();
+            // Create a signed request using the current time.
+            if (TRUE === openssl_private_encrypt(hash('sha256', $time), $hmac, $this->privateKey)) {
+                // Prioritize headers that were already set, the added headers
+                // will not overwrite them.
+                $headers = array_merge(
+                    array(
+                        'hmac' => base64_encode($hmac),
+                        'time' => $time,
+                        'user' => $this->user,
+                        'agent' => $this->agent,
+                    ),
+                    $headers
+                );
+            }
+        }
+        return parent::httpRequest($verb, $path, $query, $params, $headers, $allow_redirects);
     }
 
     /**
