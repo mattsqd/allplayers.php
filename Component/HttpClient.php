@@ -191,7 +191,7 @@ class HttpClient
             'Accept' => $this->format,
             'Content-Type' => $this->format,
         );
-        $headers = array_merge($default_headers, $headers, $this->headers);
+        $headers = array_merge($default_headers, $this->headers, $headers);
 
         $body = ($params) ? json_encode($params) : null;
 
